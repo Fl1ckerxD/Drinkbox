@@ -1,3 +1,8 @@
+using Drinkbox.Models;
+using Drinkbox.Services.Brands;
+using Drinkbox.Services.Products;
+using Microsoft.EntityFrameworkCore;
+
 namespace Drinkbox
 {
     public class Program
@@ -9,13 +14,19 @@ namespace Drinkbox
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            var conString = builder.Configuration.GetConnectionString("DrinkBoxDatabase") ??
+                throw new InvalidOperationException("Connection string 'DrinkBoxDatabase' not found.");
+            builder.Services.AddDbContext<DrinkboxContext>(options => options.UseSqlServer(conString));
+
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IBrandService, BrandService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
