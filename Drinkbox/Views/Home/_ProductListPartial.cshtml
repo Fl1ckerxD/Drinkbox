@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Product>
+
+@foreach (var prod in Model)
+{
+    <div class="product-card">
+        <div class="product-image-container">
+            <img class="product-image" src="@prod.ImageUrl" />
+        </div>
+        <div class="product-info">
+            <h3 class="product-name">@prod.ProductName</h3>
+            <div class="product-price">@prod.Price руб.</div>
+            <button type="button" class="product-button">Выбрать</button>
+        </div>
+    </div>
+}
+@if (!Model.Any())
+{
+    <div class="no-products">
+        <p>Нет товаров по выбранному фильтру</p>
+    </div>
+}

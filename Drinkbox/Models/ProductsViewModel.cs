@@ -6,6 +6,6 @@ namespace Drinkbox.Models
     {
         public IEnumerable<Product> Products { get; set; } = default!;
         public SelectList Brands { get; set; } = default!;
-        public int? SelectedBrandID { get; set; } // Для хранения выбранного бренда
+        public int? SelectedBrandID { get; set; }
     }
 }

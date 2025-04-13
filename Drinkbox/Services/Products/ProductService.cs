@@ -11,6 +11,21 @@ namespace Drinkbox.Services.Products
             _context = context;
         }
 
-        public async Task<ICollection<Product>> GetAllProductsAsyc() => await _context.Products.ToListAsync();
+        public async Task<ICollection<Product>> GetAllProductsAsync() => await _context.Products.ToListAsync();
+
+        public async Task<ICollection<Product>> GetProductsByBrandAsync(int? brandId)
+        {
+            var products = await GetAllProductsAsync();
+
+            if (brandId.HasValue)
+                products = products.Where(p => p.BrandId == brandId).ToList();
+
+            return products;
+        }
+
+        public ICollection<Product> GetProductsByMaxPrice(ICollection<Product> products, int maxPrice)
+        {
+            return products.Where(p => p.Price <= maxPrice).ToList();
+        }
     }
 }

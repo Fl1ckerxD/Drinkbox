@@ -5,10 +5,9 @@
 }
 
 <div class="product-page">
-    <div class="page-header">
+    <div>
         <h1 class="page-title">Газированные напитки</h1>
     </div>
-
     <div class="filters-container">
         <div class="filter-select">
             <label class="filter-label">Выберите бренд</label>
@@ -17,35 +16,106 @@
                 <option value="">Все бренды</option>
             </select>
         </div>
-
         <div class="price-filter">
             <label class="filter-label">Стоимость</label>
-            <input type="range"
-                   min="0"
-                   max="200"
-                   value=5>
-            <span class="price-value">{priceValue} руб</span>
+            <div class="f-inline">
+                <label class="min-price">0 руб.</label>
+                <label class="max-price">0 руб.</label>
+            </div>
+            <input type="range" min="0" max="200" value=0 step="5" />
         </div>
-
-        <button class="choose-button">Выбрать</button>
+        <div class="button-container">
+            <button class="import-button">Импорт</button>
+            <button class="choose-button">Выбрать</button>
+        </div>
     </div>
-
     <section>
         <div class="product-grid">
-            @foreach (var prod in Model.Products)
-            {
-                <div class="product-card">
-                    <div class="product-image-container">
-                        <img class="product-image" src="@prod.ImageUrl" />
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">@prod.ProductName</h3>
-                        <div class="product-price">@prod.Price руб.</div>
-                        <button type="button" class="">Выбрать</button>
-                    </div>
-                </div>
-            }
+            @await Html.PartialAsync("_ProductListPartial", Model.Products)
         </div>
     </section>
+    @section Scripts {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const brandSelect = document.querySelector('.brand-select');
+                const maxPriceValueLabel = document.querySelector('.max-price');
+                const minPriceValueLabel = document.querySelector('.min-price');
+                const priceRange = document.querySelector('input[type="range"]');
 
+                // Функция для обновления максимальной цены
+                async function updatePriceValues(brandId) {
+                    try{
+                        const response = await fetch(`/Home/GetPriceValues?brandId=${brandId}`);
+                        if (!response.ok) throw new Error('Ошибка сети');
+
+                        const data = await response.json();
+                        const maxPrice = Math.ceil(data.maxPrice);
+                        const minPrice = Math.ceil(data.minPrice);
+
+                        //Обновляем диапазон и значение
+                        priceRange.min = minPrice;
+                        priceRange.max = maxPrice;
+                        priceRange.value = maxPrice;
+                        minPriceValueLabel.textContent = `${minPrice} руб.`
+                        maxPriceValueLabel.textContent = `${maxPrice} руб.`;
+                    }
+                    catch (error){
+                        console.error('Ошибка:', error);
+                        maxPriceValueLabel.textContent = "0";
+                        minPriceValueLabel.textContent = "0";
+                    }
+                }
+
+                // Инициализация при загрузке
+                updatePriceValues(null);
+
+                // Обработчик изменения выбора бренда
+                brandSelect.addEventListener('change', async function() {
+                    try{
+                        const brandId = this.value;
+                        const response = await fetch(`/Home/FilterProducts?brandId=${brandId}`, {
+                            headers: {
+                                'Accept': 'text/html'
+                            }
+                        });
+
+                        if (!response.ok) throw new Error('Ошибка сети');
+
+                        const html = await response.text();
+                        document.querySelector('.product-grid').innerHTML = html;
+                        updatePriceValues(brandId);
+                    }
+                    catch (error) {
+                        console.error('Ошибка:', error);
+                        document.querySelector('.product-grid').innerHTML = `
+                            <div class="error">Ошибка загрузки данных</div>
+                        `;
+                    }
+                });
+
+                priceRange.addEventListener('input', async function(){
+                    try{
+                        const brandId = brandSelect.value;
+                        const priceValue = this.value;
+                        const response = await fetch(`/Home/FilterProducts?brandId=${brandId}&maxPrice=${priceValue}`, {
+                            headers: {
+                                'Accept': 'text/html'
+                            }
+                        });
+
+                        if(!response.ok) throw new Error('Ошибка сети');
+
+                        const html = await response.text();
+                        document.querySelector('.product-grid').innerHTML = html;
+                    }
+                    catch (error){
+                        console.error('Ошибка:', error);
+                        document.querySelector('.product-grid').innerHTML = `
+                            <div class="error">Ошибка загрузки данных</div>
+                        `;
+                    }
+                });
+            });
+        </script>
+    }
 </div>

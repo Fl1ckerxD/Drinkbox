@@ -1,6 +1,7 @@
 using Drinkbox.Models;
 using Drinkbox.Services.Brands;
 using Drinkbox.Services.Products;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox
@@ -13,6 +14,10 @@ namespace Drinkbox
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddResponseCompression(opt =>
+            {
+                opt.EnableForHttps = true;
+            });
 
             var conString = builder.Configuration.GetConnectionString("DrinkBoxDatabase") ??
                 throw new InvalidOperationException("Connection string 'DrinkBoxDatabase' not found.");
@@ -34,6 +39,8 @@ namespace Drinkbox
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseResponseCompression();
 
             app.MapStaticAssets();
             app.MapControllerRoute(

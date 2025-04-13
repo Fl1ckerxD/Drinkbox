@@ -24,7 +24,7 @@ namespace Drinkbox.Controllers
         {
             try
             {
-                var products = await _productService.GetAllProductsAsyc();
+                var products = await _productService.GetAllProductsAsync();
                 var brands = await _brandService.GetAllBrandsAsync();
 
                 var model = new ProductsViewModel
@@ -33,6 +33,7 @@ namespace Drinkbox.Controllers
                     Brands = new SelectList(brands, "BrandId", "BrandName"),
                     SelectedBrandID = 0
                 };
+
                 return View(model);
             }
             catch (Exception ex)
@@ -44,6 +45,28 @@ namespace Drinkbox.Controllers
                     Brands = new SelectList(Enumerable.Empty<Brand>(), "BrandID", "BrandName")
                 });
             }
+        }
+
+        [HttpGet]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+        public async Task<IActionResult> FilterProducts(int? brandId, int? maxPrice)
+        {
+            var products = await _productService.GetProductsByBrandAsync(brandId);
+            if (maxPrice.HasValue)
+                products = _productService.GetProductsByMaxPrice(products, maxPrice.Value);
+
+            return PartialView("_ProductListPartial", products);
+        }
+
+        [HttpGet]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+        public async Task<IActionResult> GetPriceValues(int? brandId)
+        {
+            var products = await _productService.GetProductsByBrandAsync(brandId);
+
+            var maxPrice = products.Any() ? products.Max(p => p.Price) : 0;
+            var minPrice = products.Any() ? products.Min(p => p.Price) : 0;
+            return Json(new { minPrice, maxPrice });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
