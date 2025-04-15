@@ -1,5 +1,6 @@
 using Drinkbox.Models;
 using Drinkbox.Services.Brands;
+using Drinkbox.Services.CartItems;
 using Drinkbox.Services.Products;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,22 @@ namespace Drinkbox
                 opt.EnableForHttps = true;
             });
 
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddHttpContextAccessor();
+
             var conString = builder.Configuration.GetConnectionString("DrinkBoxDatabase") ??
                 throw new InvalidOperationException("Connection string 'DrinkBoxDatabase' not found.");
             builder.Services.AddDbContext<DrinkboxContext>(options => options.UseSqlServer(conString));
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IBrandService, BrandService>();
+            builder.Services.AddScoped<ICartItemService, CartItemService>();
 
             var app = builder.Build();
 
@@ -34,7 +45,7 @@ namespace Drinkbox
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseRouting();
 

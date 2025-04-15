@@ -79,6 +79,7 @@
     font-size: 16px;
     cursor: pointer;
     min-width: 150px;
+    text-decoration: none;
 }
 
     .choose-button:hover {
@@ -98,6 +99,11 @@
     display: grid;
     gap: 10px;
     margin-bottom: 0px;
+}
+
+.cart {
+    display: flex;
+    justify-content: center;
 }
 
 /* Product Grid */
@@ -155,7 +161,7 @@
     text-align: left;
 }
 
-.product-button {
+.product-button, .product-close-button {
     border: none;
     border-radius: 4px;
     padding: 8px 0;
@@ -166,9 +172,23 @@
     background-color: #FFCC00;
 }
 
-    .product-button:hover {
-        background-color: #FFE373;
+    .product-button.selected {
+        background-color: #7BC043;
+        color: white;
     }
+
+.product-close-button {
+    background-color: #C4C4C4;
+    color: black;
+}
+
+.product-button:hover {
+    background-color: #FFE373;
+}
+
+.product-button.selected:hover {
+    background-color: #6bb037;
+}
 
 @media (max-width: 768px) {
     .filters-container {

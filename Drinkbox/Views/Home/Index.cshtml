@@ -11,7 +11,7 @@
     <div class="filters-container">
         <div class="filter-select">
             <label class="filter-label">Выберите бренд</label>
-            <select class="brand-select" asp-for="SelectedBrandID"
+            <select class="brand-select" 
                     asp-items="Model.Brands">
                 <option value="">Все бренды</option>
             </select>
@@ -26,96 +26,13 @@
         </div>
         <div class="button-container">
             <button class="import-button">Импорт</button>
-            <button class="choose-button">Выбрать</button>
+            @(await Component.InvokeAsync("CartSummary"))
         </div>
     </div>
     <section>
         <div class="product-grid">
-            @await Html.PartialAsync("_ProductListPartial", Model.Products)
+            @await Html.PartialAsync("_ProductListPartial", Model)
         </div>
     </section>
-    @section Scripts {
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const brandSelect = document.querySelector('.brand-select');
-                const maxPriceValueLabel = document.querySelector('.max-price');
-                const minPriceValueLabel = document.querySelector('.min-price');
-                const priceRange = document.querySelector('input[type="range"]');
-
-                // Функция для обновления максимальной цены
-                async function updatePriceValues(brandId) {
-                    try{
-                        const response = await fetch(`/Home/GetPriceValues?brandId=${brandId}`);
-                        if (!response.ok) throw new Error('Ошибка сети');
-
-                        const data = await response.json();
-                        const maxPrice = Math.ceil(data.maxPrice);
-                        const minPrice = Math.ceil(data.minPrice);
-
-                        //Обновляем диапазон и значение
-                        priceRange.min = minPrice;
-                        priceRange.max = maxPrice;
-                        priceRange.value = maxPrice;
-                        minPriceValueLabel.textContent = `${minPrice} руб.`
-                        maxPriceValueLabel.textContent = `${maxPrice} руб.`;
-                    }
-                    catch (error){
-                        console.error('Ошибка:', error);
-                        maxPriceValueLabel.textContent = "0";
-                        minPriceValueLabel.textContent = "0";
-                    }
-                }
-
-                // Инициализация при загрузке
-                updatePriceValues(null);
-
-                // Обработчик изменения выбора бренда
-                brandSelect.addEventListener('change', async function() {
-                    try{
-                        const brandId = this.value;
-                        const response = await fetch(`/Home/FilterProducts?brandId=${brandId}`, {
-                            headers: {
-                                'Accept': 'text/html'
-                            }
-                        });
-
-                        if (!response.ok) throw new Error('Ошибка сети');
-
-                        const html = await response.text();
-                        document.querySelector('.product-grid').innerHTML = html;
-                        updatePriceValues(brandId);
-                    }
-                    catch (error) {
-                        console.error('Ошибка:', error);
-                        document.querySelector('.product-grid').innerHTML = `
-                            <div class="error">Ошибка загрузки данных</div>
-                        `;
-                    }
-                });
-
-                priceRange.addEventListener('input', async function(){
-                    try{
-                        const brandId = brandSelect.value;
-                        const priceValue = this.value;
-                        const response = await fetch(`/Home/FilterProducts?brandId=${brandId}&maxPrice=${priceValue}`, {
-                            headers: {
-                                'Accept': 'text/html'
-                            }
-                        });
-
-                        if(!response.ok) throw new Error('Ошибка сети');
-
-                        const html = await response.text();
-                        document.querySelector('.product-grid').innerHTML = html;
-                    }
-                    catch (error){
-                        console.error('Ошибка:', error);
-                        document.querySelector('.product-grid').innerHTML = `
-                            <div class="error">Ошибка загрузки данных</div>
-                        `;
-                    }
-                });
-            });
-        </script>
-    }
+    <script src="~/js/products.js"></script>
 </div>

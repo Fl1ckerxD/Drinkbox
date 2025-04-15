@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Drinkbox.Models;
 using Drinkbox.Services.Brands;
+using Drinkbox.Services.CartItems;
 using Drinkbox.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,26 +13,29 @@ namespace Drinkbox.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IProductService _productService;
         private readonly IBrandService _brandService;
+        private readonly ICartItemService _cartItemService;
 
-        public HomeController(ILogger<HomeController> logger, IProductService productService, IBrandService brandService)
+        public HomeController(ILogger<HomeController> logger, IProductService productService,
+            IBrandService brandService, ICartItemService cartItemService)
         {
             _logger = logger;
             _productService = productService;
             _brandService = brandService;
+            _cartItemService = cartItemService;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                var products = await _productService.GetAllProductsAsync();
+                var products = await _productService.GetAllAsync();
                 var brands = await _brandService.GetAllBrandsAsync();
 
                 var model = new ProductsViewModel
                 {
                     Products = products,
                     Brands = new SelectList(brands, "BrandId", "BrandName"),
-                    SelectedBrandID = 0
+                    ProductsInCart = new HashSet<int>(_cartItemService.CartItems.Select(x => x.ProductId))
                 };
 
                 return View(model);
@@ -51,18 +55,24 @@ namespace Drinkbox.Controllers
         [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> FilterProducts(int? brandId, int? maxPrice)
         {
-            var products = await _productService.GetProductsByBrandAsync(brandId);
+            var products = await _productService.GetByBrandAsync(brandId);
             if (maxPrice.HasValue)
-                products = _productService.GetProductsByMaxPrice(products, maxPrice.Value);
+                products = _productService.GetByMaxPrice(products, maxPrice.Value);
 
-            return PartialView("_ProductListPartial", products);
+            var model = new ProductsViewModel
+            {
+                Products = products,
+                ProductsInCart = new HashSet<int>(_cartItemService.CartItems.Select(x => x.ProductId))
+            };
+
+            return PartialView("_ProductListPartial", model);
         }
 
         [HttpGet]
         [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetPriceValues(int? brandId)
         {
-            var products = await _productService.GetProductsByBrandAsync(brandId);
+            var products = await _productService.GetByBrandAsync(brandId);
 
             var maxPrice = products.Any() ? products.Max(p => p.Price) : 0;
             var minPrice = products.Any() ? products.Min(p => p.Price) : 0;

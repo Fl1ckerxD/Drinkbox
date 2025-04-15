@@ -1,0 +1,13 @@
+﻿@model int
+@if (Model > 0)
+{
+    <a asp-controller="Cart" asp-action="Index" class="choose-button">
+        <span class="cart">Выбрано: @Model</span>
+    </a>
+}
+else
+{
+    <a  class="choose-button">
+        <span class="cart">Не выбрано</span>
+    </a>
+}

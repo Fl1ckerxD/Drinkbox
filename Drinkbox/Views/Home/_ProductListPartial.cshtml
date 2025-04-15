@@ -1,6 +1,6 @@
-﻿@model IEnumerable<Product>
+﻿@model ProductsViewModel
 
-@foreach (var prod in Model)
+@foreach (var prod in Model.Products)
 {
     <div class="product-card">
         <div class="product-image-container">
@@ -9,11 +9,23 @@
         <div class="product-info">
             <h3 class="product-name">@prod.ProductName</h3>
             <div class="product-price">@prod.Price руб.</div>
-            <button type="button" class="product-button">Выбрать</button>
+            @if (prod.IsActive.Value)
+            {
+                <button type="button"
+                    class="product-button @(Model.ProductsInCart.Contains(prod.ProductId) ? "selected" : "")"
+                    data-product-id="@prod.ProductId"
+                    data-selected="@Model.ProductsInCart.Contains(prod.ProductId).ToString().ToLower()">
+                    @(Model.ProductsInCart.Contains(prod.ProductId) ? "Выбрано" : "Выбрать")
+                </button>
+            }
+            else
+            {
+                <button data-product-id="@prod.ProductId" class="product-close-button">Закончился</button>
+            }
         </div>
     </div>
 }
-@if (!Model.Any())
+@if (!Model.Products.Any())
 {
     <div class="no-products">
         <p>Нет товаров по выбранному фильтру</p>

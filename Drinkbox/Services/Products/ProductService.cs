@@ -11,11 +11,11 @@ namespace Drinkbox.Services.Products
             _context = context;
         }
 
-        public async Task<ICollection<Product>> GetAllProductsAsync() => await _context.Products.ToListAsync();
+        public async Task<ICollection<Product>> GetAllAsync() => await _context.Products.ToListAsync();
 
-        public async Task<ICollection<Product>> GetProductsByBrandAsync(int? brandId)
+        public async Task<ICollection<Product>> GetByBrandAsync(int? brandId)
         {
-            var products = await GetAllProductsAsync();
+            var products = await GetAllAsync();
 
             if (brandId.HasValue)
                 products = products.Where(p => p.BrandId == brandId).ToList();
@@ -23,7 +23,12 @@ namespace Drinkbox.Services.Products
             return products;
         }
 
-        public ICollection<Product> GetProductsByMaxPrice(ICollection<Product> products, int maxPrice)
+        public async Task<Product> GetByIdAsync(int productId)
+        {
+            return await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+        }
+
+        public ICollection<Product> GetByMaxPrice(ICollection<Product> products, int maxPrice)
         {
             return products.Where(p => p.Price <= maxPrice).ToList();
         }
