@@ -95,36 +95,39 @@
         }
     });
 
-    document.querySelectorAll('.product-button').forEach(button => {
-        button.addEventListener('click', async function () {
-            const productId = this.dataset.productId;
-            const isSelected = this.dataset.selected === 'true';
+    document.addEventListener('click', async function (event) {
+        const button = event.target.closest('.product-button');
+        if (!button) return;
 
-            try {
-                const response = await fetch('/Cart/ToggleProduct', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        productId: parseInt(productId),
-                        isSelected: !isSelected
-                    })
-                });
+        const productId = button.dataset.productId;
+        const isSelected = button.dataset.selected === 'true';
 
-                if (!response.ok) throw new Error('Ошибка сети');
+        try {
+            const response = await fetch('/Cart/ToggleProduct', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId: parseInt(productId),
+                    isSelected: !isSelected
+                })
+            });
 
-                toggleButtonState(this);
-                updateCartButton();
-                alert('Товар был добавлен');
-            }
-            catch (error) {
-                console.error('Ошибка:', error);
-            }
-        });
+            if (!response.ok) throw new Error('Ошибка сети');
+
+            toggleButtonState(button);
+            updateCartButton();
+            alert('Товар был добавлен');
+        }
+        catch (error) {
+            console.error('Ошибка:', error);
+        }
     });
 
     function toggleButtonState(button) {
+        if (!button) return;
+
         const isSelected = button.dataset.selected === 'true';
 
         button.textContent = isSelected ? 'Выбрать' : 'Выбрано';
