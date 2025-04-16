@@ -48,6 +48,7 @@
                     if (document.querySelectorAll('tbody tr').length === 0) {
                         document.querySelector('tbody').innerHTML = '<p>У вас нет ни одного товара, вернитесь на страница каталога</p>'
                     }
+                    updateTotal();
                 }
                 else {
                     throw new Error('Ошибка при удалении предмета из корзины');
@@ -77,6 +78,7 @@
             const result = await response.json();
 
             inputElement.value = result.actualQuantity;
+            updateProductPrice(inputElement);
         }
         catch (error) {
             console.error('Ошибка:', error);
@@ -94,6 +96,15 @@
         catch (error) {
             console.error('Ошибка при обновлении суммы:', error);
         }
+    }
+
+    async function updateProductPrice(element) {
+        const row = element.closest('tr');
+        const priceElement = row.querySelector('.price-cell');
+        const unitPrice = parseInt(priceElement.dataset.unitPrice);
+        const quantity = parseInt(element.value);
+        const currentPrice = unitPrice * quantity;
+        priceElement.textContent = `${currentPrice} руб.`;
     }
 
     updateTotal();

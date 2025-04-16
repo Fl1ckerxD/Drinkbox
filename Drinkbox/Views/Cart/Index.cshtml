@@ -35,7 +35,7 @@
                                 <button class="quantity-control plus">+</button>
                             </div>
                         </td>
-                        <td class="price-cell">@prod.Price руб.</td>
+                        <td class="price-cell" data-unit-price="@prod.Price">@(prod.Price * prod.Quantity) руб.</td>
                         <td class="action-cell">
                             <button class="remove-icon" data-product-id="@prod.ProductId">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

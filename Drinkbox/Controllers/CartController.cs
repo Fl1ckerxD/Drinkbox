@@ -88,14 +88,5 @@ namespace Drinkbox.Controllers
     }
 
     public record ToggleProductRequest(int productId, bool isSelected);
-    //{
-    //    public int productId { get; set; }
-    //    public bool isSelected { get; set; }
-    //}
-
     public record UpdateQuantityRequest(int productId, int quantity);
-    //{
-    //    public int productId { get; set; }
-    //    public int quantity { get; set; }
-    //}
 }
