@@ -74,7 +74,9 @@
 
             if (!response.ok) throw new Error('Ошибка обновления');
 
-            inputElement.value = quantity;
+            const result = await response.json();
+
+            inputElement.value = result.actualQuantity;
         }
         catch (error) {
             console.error('Ошибка:', error);

@@ -22,18 +22,6 @@ namespace Drinkbox.Controllers
             return View(cartItems);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
-        //{
-        //    var product = await _productService.GetByIdAsync(productId);
-
-        //    if (product == null) return NotFound();
-
-        //    _cartItemService.AddToCart(product, quantity);
-
-        //    return Ok();
-        //}
-
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int productId)
         {
@@ -75,9 +63,18 @@ namespace Drinkbox.Controllers
 
             if (product != null)
             {
-                product.Quantity = request.quantity;
+                var quantity = request.quantity;
+                quantity = Math.Min(quantity, product.MaxQuantity);
+                quantity = Math.Max(1, quantity);
+
+                product.Quantity = quantity;
                 _cartItemService.SaveCart();
-                return Ok();
+                return Json(new
+                {
+                    success = true,
+                    actualQuantity = quantity,
+                    maxQuantity = product.MaxQuantity
+                });
             }
             return NotFound();
         }

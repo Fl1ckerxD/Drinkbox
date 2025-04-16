@@ -19,7 +19,7 @@ namespace Drinkbox.Services.CartItems
 
             if (existingItem != null)
             {
-                existingItem.Quantity += quantity;
+                existingItem.Quantity = Math.Min(existingItem.Quantity + quantity, product.Quantity);
             }
             else
             {
@@ -28,8 +28,9 @@ namespace Drinkbox.Services.CartItems
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     Price = product.Price,
-                    Quantity = quantity,
+                    Quantity = Math.Min(quantity, product.Quantity),
                     ImageUrl = product.ImageUrl,
+                    MaxQuantity = product.Quantity
                 });
             }
 
