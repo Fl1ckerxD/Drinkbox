@@ -2,7 +2,6 @@ using Drinkbox.Models;
 using Drinkbox.Services.Brands;
 using Drinkbox.Services.CartItems;
 using Drinkbox.Services.Products;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox
