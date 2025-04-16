@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Coin>
+<link rel="stylesheet" href="~/css/payment.css" asp-append-version="true" />
+
+<div class="payment-page">
+    <h1 class="payment-title">Оплата</h1>
+
+    <div class="payment-table-wrapper">
+        <table class="payment-table">
+            <thead class="payment-thead">
+                <tr>
+                    <th class="denomination-col">Номинал</th>
+                    <th class="quantity-col">Количество</th>
+                    <th class="sum-col">Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var coin in Model)
+                {
+                    <tr>
+                        <td class="coin-cell">
+                            <div class="coin-info">
+                                <div class="coin-image-wrapper">
+                                    <svg width="132" height="132" viewBox="0 0 32 32">
+                                        <circle cx="16" cy="16" r="14" fill="#e0e0e0" stroke="#333" stroke-width="1" />
+                                        <text x="16" y="18" font-size="16" font-weight="bold"
+                                              fill="black" text-anchor="middle" dominant-baseline="middle">@int.Parse(coin.Denomination.Split()[0])</text>
+                                    </svg>
+                                </div>
+                                <span class="coin-name">@coin.Denomination</span>
+                            </div>
+                        </td>
+                        <td class="quantity-cell">
+                            <div class="quantity">
+                                <button class="quantity-control minus">-</button>
+                                <input type="text" class="quantity-value"
+                                       data-coid-id="@coin.CoinId"
+                                       value="@coin.Quantity" />
+                                <button class="quantity-control plus">+</button>
+                            </div>
+                        </td>
+                        <td class="sum-cell" data-coin-id="@coin.CoinId">@(int.Parse(coin.Denomination.Split()[0]) * coin.Quantity) руб.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="total-container">
+        <div class="total-container" style="padding-right: 35px">
+            <span class="total-label">Итоговая сумма</span>
+            <span class="total-amount">193 руб.</span>
+        </div>
+        <div class="total-container">
+            <span class="total-label">Вы внесли</span>
+            <span class="total-amount">18 руб.</span>
+        </div>
+    </div>
+
+    <div class="payment-actions">
+        <a href="/Cart" class="static-button back-button">Вернуться</a>
+        <a href="/" class="static-button payment-button">Оплатить</a>
+    </div>
+    @* <script src="~/js/cart.js"></script> *@
+</div>

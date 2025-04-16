@@ -1,6 +1,7 @@
 using Drinkbox.Models;
 using Drinkbox.Services.Brands;
 using Drinkbox.Services.CartItems;
+using Drinkbox.Services.Coins;
 using Drinkbox.Services.Products;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,7 @@ namespace Drinkbox
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<ICartItemService, CartItemService>();
+            builder.Services.AddScoped<ICoinService, CoinService>();
 
             var app = builder.Build();
 

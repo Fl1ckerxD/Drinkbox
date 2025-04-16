@@ -43,7 +43,7 @@ public partial class DrinkboxContext : DbContext
             entity.HasKey(e => e.CoinId).HasName("PK__Coins__3CD32F818F2A28DF");
 
             entity.Property(e => e.CoinId).HasColumnName("CoinID");
-            entity.Property(e => e.Denomination).HasDefaultValue(1);
+            entity.Property(e => e.Denomination).HasMaxLength(12);
         });
 
         modelBuilder.Entity<Order>(entity =>
