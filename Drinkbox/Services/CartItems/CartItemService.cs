@@ -36,7 +36,7 @@ namespace Drinkbox.Services.CartItems
             SaveCart();
         }
 
-        private void SaveCart()
+        public void SaveCart()
         {
             var session = _httpContextAccessor.HttpContext.Session;
             session.SetString("Cart", JsonSerializer.Serialize(_cartItems));

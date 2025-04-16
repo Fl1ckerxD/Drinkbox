@@ -22,17 +22,17 @@ namespace Drinkbox.Controllers
             return View(cartItems);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
-        {
-            var product = await _productService.GetByIdAsync(productId);
+        //[HttpPost]
+        //public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
+        //{
+        //    var product = await _productService.GetByIdAsync(productId);
 
-            if (product == null) return NotFound();
+        //    if (product == null) return NotFound();
 
-            _cartItemService.AddToCart(product, quantity);
+        //    _cartItemService.AddToCart(product, quantity);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int productId)
@@ -67,11 +67,38 @@ namespace Drinkbox.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        public IActionResult UpdateQuantity([FromBody] UpdateQuantityRequest request)
+        {
+            var product = _cartItemService.CartItems.FirstOrDefault(x => x.ProductId == request.productId);
+
+            if (product != null)
+            {
+                product.Quantity = request.quantity;
+                _cartItemService.SaveCart();
+                return Ok();
+            }
+            return NotFound();
+        }
+
+        [HttpGet]
+        public IActionResult GetTotal()
+        {
+            var total = _cartItemService.CartItems.Sum(x => x.Price * x.Quantity);
+            return Json(new { total });
+        }
     }
 
-    public class ToggleProductRequest
-    {
-        public int productId { get; set; }
-        public bool isSelected { get; set; }
-    }
+    public record ToggleProductRequest(int productId, bool isSelected);
+    //{
+    //    public int productId { get; set; }
+    //    public bool isSelected { get; set; }
+    //}
+
+    public record UpdateQuantityRequest(int productId, int quantity);
+    //{
+    //    public int productId { get; set; }
+    //    public int quantity { get; set; }
+    //}
 }

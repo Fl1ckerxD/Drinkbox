@@ -8,5 +8,6 @@ namespace Drinkbox.Services.CartItems
         void AddToCart(Product product, int quantity = 1);
         void RemoveFromCart(Product product);
         void LoadCart();
+        void SaveCart();
     }
 }
