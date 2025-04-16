@@ -1,4 +1,6 @@
-﻿namespace Drinkbox.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Drinkbox.Models
 {
     public class CartItem
     {

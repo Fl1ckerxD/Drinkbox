@@ -1,0 +1,61 @@
+﻿@model List<CartItem>
+<link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+
+<div class="cart-page">
+    <h1 class="cart-title">Оформление заказа</h1>
+
+    <div class="cart-table-wrapper">
+        <table class="cart-table">
+            <thead class="cart-thead">
+                <tr>
+                    <th class="product-col">Товар</th>
+                    <th class="quantity-col">Количество</th>
+                    <th class="price-col">Цена</th>
+                    <th class="action-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var prod in Model)
+                {
+                    <tr>
+                        <td class="product-cell">
+                            <div class="product-info">
+                                <div class="product-image-wrapper">
+                                    <img class="cart-product-image" src="@prod.ImageUrl" />
+                                </div>
+                                <span class="product-name">@prod.ProductName</span>
+                            </div>
+                        </td>
+                        <td class="quantity-cell">
+                            <div class="quantity">
+                                <button class="quantity-control minus">-</button>
+                                <input type="text" class="quantity-value"
+                                       value="@prod.Quantity" />
+                                <button class="quantity-control plus">+</button>
+                            </div>
+                        </td>
+                        <td class="price-cell">@prod.Price руб.</td>
+                        <td class="action-cell">
+                            <button class="remove-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 7V19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7M4 7H20M10 11V16M14 11V16M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="total-container">
+        <span class="total-label">Итоговая сумма</span>
+        <span class="total-amount">193 руб.</span>
+    </div>
+
+    <div class="cart-actions">
+        <a href="/" class="static-button back-button">Вернуться</a>
+        <div class="static-button payment-button">Оплата</div>
+    </div>
+    <script src="~/js/cart.js"></script>
+</div>

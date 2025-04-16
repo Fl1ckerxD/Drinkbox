@@ -18,7 +18,8 @@ namespace Drinkbox.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var cartItems = _cartItemService.CartItems;
+            return View(cartItems);
         }
 
         [HttpPost]

@@ -36,7 +36,7 @@
         const text = document.querySelector('.cart');
 
         if (data.hasItems) {
-            cartButton.href = '/Cart/GetCart';
+            cartButton.href = '/Cart';
             text.textContent = `Выбрано: ${data.itemCount}`;
         }
         else {
@@ -118,7 +118,6 @@
 
             toggleButtonState(button);
             updateCartButton();
-            alert('Товар был добавлен');
         }
         catch (error) {
             console.error('Ошибка:', error);
