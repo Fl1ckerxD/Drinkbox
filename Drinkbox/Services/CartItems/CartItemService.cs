@@ -1,4 +1,5 @@
 ﻿using Drinkbox.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace Drinkbox.Services.CartItems
@@ -7,10 +8,12 @@ namespace Drinkbox.Services.CartItems
     {
         private List<CartItem> _cartItems = new();
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly DrinkboxContext _context;
         public List<CartItem> CartItems => _cartItems;
-        public CartItemService(IHttpContextAccessor httpContextAccessor)
+        public CartItemService(IHttpContextAccessor httpContextAccessor, DrinkboxContext context)
         {
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
             LoadCart();
         }
         public void AddToCart(Product product, int quantity = 1)
@@ -30,7 +33,8 @@ namespace Drinkbox.Services.CartItems
                     Price = product.Price,
                     Quantity = Math.Min(quantity, product.Quantity),
                     ImageUrl = product.ImageUrl,
-                    MaxQuantity = product.Quantity
+                    MaxQuantity = product.Quantity,
+                    BrandId = product.BrandId
                 });
             }
 
@@ -63,9 +67,40 @@ namespace Drinkbox.Services.CartItems
             SaveCart();
         }
 
-        public void ClearCart()
+        public async Task CompleteOrder()
         {
-            _cartItems?.Clear();
+            var totalPrice = _cartItems.Sum(x => x.Price * x.Quantity);
+            var order = new Order
+            {
+                TotalSum = totalPrice
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            foreach (var item in _cartItems)
+            {
+                var brand = await _context.Brands.FirstOrDefaultAsync(b => b.BrandId == item.BrandId);
+                var orderItem = new OrderItem
+                {
+                    OrderId = order.OrderId,
+                    ProductId = item.ProductId,
+                    ProductName = item.ProductName,
+                    BrandName = brand.BrandName,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.Price,
+                    TotalPrice = totalPrice
+                };
+                _context.OrderItems.Add(orderItem);
+
+                var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
+                if (product != null)
+                    product.Quantity -= item.Quantity;
+            }
+
+            await _context.SaveChangesAsync();
+
+            _cartItems.Clear();
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Drinkbox.Models
         public int Quantity { get; set; }
         public string ImageUrl { get; set; }
         public int MaxQuantity { get; set; }
+        public int BrandId { get; set; }
     }
 }

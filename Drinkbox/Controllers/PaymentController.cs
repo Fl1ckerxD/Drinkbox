@@ -9,10 +9,13 @@ namespace Drinkbox.Controllers
     {
         private readonly ICoinService _coinService;
         private readonly ICartItemService _cartItemService;
-        public PaymentController(ICoinService coinService, ICartItemService cartItemService)
+        private readonly ILogger<PaymentController> _logger;
+        public PaymentController(ICoinService coinService, ICartItemService cartItemService,
+            ILogger<PaymentController> logger)
         {
             _coinService = coinService;
             _cartItemService = cartItemService;
+            _logger = logger;
         }
         public async Task<IActionResult> Index()
         {
@@ -22,47 +25,41 @@ namespace Drinkbox.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProcessPayment([FromBody] List<Coin> coinsInput)
+        public async Task<IActionResult> ProcessPayment([FromBody] List<CoinInput> coinsInput)
         {
-            var cartTotal = _cartItemService.CartItems.Sum(x => x.Price * x.Quantity);
-            var paymentTotal = coinsInput.Sum(c => c.Value * c.Quantity);
-
-            if (paymentTotal < cartTotal)
-                return Json(new { success = false, message = "Недостаточно средств" });
-
-            await _coinService.SaveCoinsAsync(coinsInput);
-
-            var change = paymentTotal - cartTotal;
-            var changeCoins = CalculateChange(change.Value);
-
-            _cartItemService.ClearCart();
-
-            return Json(new
+            try
             {
-                success = true,
-                changeAmount = change,
-                changeCoins = changeCoins
-            });
-        }
+                var cartTotal = _cartItemService.CartItems.Sum(x => x.Price * x.Quantity);
+                var paymentTotal = coinsInput.Sum(c => c.Value * c.Quantity);
 
-        private Dictionary<int, int> CalculateChange(int changeAmount)
-        {
-            var denominations = new[] { 10, 5, 2, 1 };
-            var change = new Dictionary<int, int>();
+                if (paymentTotal < cartTotal)
+                    return Json(new { success = false, message = "Недостаточно средств" });
 
-            foreach (var denom in denominations)
-            {
-                if (changeAmount >= denom)
+                await _coinService.SaveCoinsAsync(coinsInput);
+
+                var change = paymentTotal - cartTotal;
+
+                if (change > 0)
                 {
-                    int count = changeAmount / denom;
-                    change.Add(denom, count);
-                    changeAmount -= count * denom;
+                    var changeCoins = await _coinService.CalculateChange(change);
+                    if (changeCoins != null)
+                        await _coinService.UpdateQuantityCoins(changeCoins);
                 }
-            }
 
-            return change;
+                await _cartItemService.CompleteOrder();
+
+                return Json(new
+                {
+                    success = true,
+                    changeAmount = change,
+                    //changeCoins = changeCoins
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка обработки платежа");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
-
-    
 }

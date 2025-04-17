@@ -9,6 +9,6 @@ namespace Drinkbox.Services.CartItems
         void RemoveFromCart(Product product);
         void LoadCart();
         void SaveCart();
-        void ClearCart();
+        Task CompleteOrder();
     }
 }

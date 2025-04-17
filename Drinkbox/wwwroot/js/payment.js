@@ -25,6 +25,25 @@
         return total;
     }
 
+    function getCoinsData() {
+        const coins = [];
+
+        document.querySelectorAll('.payment-table tbody tr').forEach(row => {
+            const quantityInput = row.querySelector('.quantity-value');
+            const coinName = row.querySelector('.coin-name');
+
+            if (quantityInput && coinName) {
+                coins.push({
+                    CoinId: parseInt(quantityInput.dataset.coinId),
+                    Value: parseInt(coinName.textContent.split()[0]),
+                    Quantity: parseInt(quantityInput.value) || 0
+                });
+            }
+        });
+
+        return coins.filter(coin => coin.Quantity > 0);
+    }
+
     async function checkPayment() {
         const cartTotal = await updateTotal();
         const paymentTotal = updatePaymentTotal();
@@ -32,11 +51,9 @@
 
         if (paymentTotal >= cartTotal) {
             paymentButton.classList.remove('disabled');
-            //paymentButton.style.backgroundColor = "#7BC043";
         }
         else {
             paymentButton.classList.add('disabled');
-            //paymentButton.style.backgroundColor = '#cccccc';
         }
     }
 
@@ -88,13 +105,7 @@
 
         if (this.classList.contains('disabled')) return;
 
-        const coins = Array.from(document.querySelectorAll('tr')).map(row => {
-            return {
-                CoinId: parseInt(row.querySelector('.quantity-value').dataset.coinId),
-                Value: parseInt(row.querySelector('.coin-name').textContent.split()[0]),
-                Quantity: parseInt(row.querySelector('.quantity-value').value) || 0
-            };
-        }).filter(coin => coin.Quantity > 0);
+        const coins = getCoinsData();
 
         try {
             const response = await fetch('/Payment/ProcessPayment', {
