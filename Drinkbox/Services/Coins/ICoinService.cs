@@ -4,7 +4,7 @@ namespace Drinkbox.Services.Coins
 {
     public interface ICoinService
     {
-        Task<Coin> GetByIdAsync(int coinId);
         Task<ICollection<Coin>> GetAllAsync();
+        Task SaveCoinsAsync(List<Coin> coins);
     }
 }

@@ -10,11 +10,20 @@ namespace Drinkbox.Services.Coins
         {
             _context = context;
         }
+
         public async Task<ICollection<Coin>> GetAllAsync() => await _context.Coins.ToListAsync();
 
-        public async Task<Coin> GetByIdAsync(int coinId)
+        public async Task SaveCoinsAsync(List<Coin> userCoins)
         {
-            return await _context.Coins.FirstOrDefaultAsync(c => c.CoinId == coinId);
+            var coins = await GetAllAsync();
+
+            foreach (var coin in coins)
+            {
+                var userCoin = userCoins.FirstOrDefault(u => u.CoinId == coin.CoinId);
+                if (userCoin != null)
+                    coin.Quantity += userCoin.Quantity;
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }

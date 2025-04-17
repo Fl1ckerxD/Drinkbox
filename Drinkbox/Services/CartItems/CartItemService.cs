@@ -62,5 +62,10 @@ namespace Drinkbox.Services.CartItems
             _cartItems.Remove(existingItem);
             SaveCart();
         }
+
+        public void ClearCart()
+        {
+            _cartItems?.Clear();
+        }
     }
 }
