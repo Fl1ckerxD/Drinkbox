@@ -48,12 +48,15 @@
         const cartTotal = await updateTotal();
         const paymentTotal = updatePaymentTotal();
         const paymentButton = document.querySelector('.payment-button');
+        const sumPrice = document.querySelector('.payment-total-amount');
 
         if (paymentTotal >= cartTotal) {
             paymentButton.classList.remove('disabled');
+            sumPrice.style.color = '#7BC043';
         }
         else {
             paymentButton.classList.add('disabled');
+            sumPrice.style.color = 'red';
         }
     }
 
@@ -119,8 +122,10 @@
             const result = await response.json();
 
             if (!result.success) {
-                alert(result.message);
+                alert('Недостаточно средств');
             }
+
+            window.location.href = result.redirectUrl;
         }
         catch (error) {
             console.error('Ошибка:', error);

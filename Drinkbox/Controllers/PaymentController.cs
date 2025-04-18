@@ -2,6 +2,7 @@
 using Drinkbox.Services.CartItems;
 using Drinkbox.Services.Coins;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Drinkbox.Controllers
 {
@@ -19,6 +20,9 @@ namespace Drinkbox.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            if (_cartItemService.CartItems.Count == 0)
+                return RedirectToAction("Index", "Home");
+
             var coinList = new List<Coin>(await _coinService.GetAllAsync());
             coinList.ForEach(c => c.Quantity = 0);
             return View(coinList);
@@ -38,21 +42,21 @@ namespace Drinkbox.Controllers
                 await _coinService.SaveCoinsAsync(coinsInput);
 
                 var change = paymentTotal - cartTotal;
-
+                Dictionary<int, int> changeCoins = new();
                 if (change > 0)
                 {
-                    var changeCoins = await _coinService.CalculateChange(change);
+                    changeCoins = await _coinService.CalculateChange(change);
                     if (changeCoins != null)
                         await _coinService.UpdateQuantityCoins(changeCoins);
                 }
 
                 await _cartItemService.CompleteOrder();
 
+                TempData["ChangeCoins"] = JsonSerializer.Serialize(changeCoins);
                 return Json(new
                 {
                     success = true,
-                    changeAmount = change,
-                    //changeCoins = changeCoins
+                    redirectUrl = Url.Action("CompletePurchase", "Payment")
                 });
             }
             catch (Exception ex)
@@ -60,6 +64,26 @@ namespace Drinkbox.Controllers
                 _logger.LogError(ex, "Ошибка обработки платежа");
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        public IActionResult CompletePurchase()
+        {
+            if (TempData["ChangeCoins"] is string serializedCoins)
+            {
+                var changeCoins = JsonSerializer.Deserialize<Dictionary<int, int>>(serializedCoins);
+
+                var denominations = new[] { 1, 2, 5, 10 };
+                var change = new Dictionary<int, int>();
+                foreach (var denom in denominations)
+                {
+                    if (changeCoins.ContainsKey(denom))
+                        change.Add(denom, changeCoins[denom]);
+                    else
+                        change.Add(denom, 0);
+                }
+                return View(change);
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

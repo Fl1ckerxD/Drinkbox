@@ -30,7 +30,8 @@ namespace Drinkbox.Services.Coins
         {
             foreach (var (denomination, quantity) in coinsToRemove)
             {
-                var coin = await _context.Coins.FirstOrDefaultAsync(x => x.Value == denomination);
+                var coins = await GetAllAsync();
+                var coin = coins.FirstOrDefault(x => x.Value == denomination);
 
                 if (coin != null)
                     coin.Quantity = Math.Max(0, coin.Quantity - quantity);

@@ -101,6 +101,7 @@ namespace Drinkbox.Services.CartItems
             await _context.SaveChangesAsync();
 
             _cartItems.Clear();
+            SaveCart();
         }
     }
 }

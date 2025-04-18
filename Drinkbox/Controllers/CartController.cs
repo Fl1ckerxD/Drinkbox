@@ -16,8 +16,12 @@ namespace Drinkbox.Controllers
             _cartItemService = cartItemService;
             _productService = productService;
         }
+
         public IActionResult Index()
         {
+            if (_cartItemService.CartItems.Count == 0)
+                return RedirectToAction("Index", "Home");
+
             var cartItems = _cartItemService.CartItems;
             return View(cartItems);
         }
