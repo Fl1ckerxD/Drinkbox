@@ -33,7 +33,6 @@
         padding: 15px;
     }
 
-/* Table column widths */
 .product-col {
     width: 50%;
     text-align: left;
@@ -54,7 +53,6 @@
     text-align: right;
 }
 
-/* Product styling */
 .product-info {
     display: flex;
     flex-direction: row;
@@ -83,7 +81,6 @@
     font-size: 14px;
 }
 
-/* Quantity control styling */
 .quantity {
     display: flex;
     align-items: center;
@@ -119,13 +116,11 @@
     background-color: white;
 }
 
-/* Price styling */
 .price-cell {
     font-weight: bold;
     text-align: center;
 }
 
-/* Remove icon styling */
 .remove-icon {
     background: none;
     border: none;
@@ -139,7 +134,6 @@
         color: #333;
     }
 
-/* Total styling */
 .total-container {
     display: flex;
     justify-content: right;
@@ -161,7 +155,6 @@
     font-size: 30px;
 }
 
-/* Action buttons styling */
 .cart-actions {
     display: flex;
     justify-content: space-between;
@@ -201,7 +194,6 @@
         background-color: #6bb037;
     }
 
-/* Responsive */
 @media (max-width: 768px) {
     .product-info {
         flex-direction: column;

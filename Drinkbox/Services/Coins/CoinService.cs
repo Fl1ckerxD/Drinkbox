@@ -61,7 +61,7 @@ namespace Drinkbox.Services.Coins
             }
 
             if (changeAmount > 0)
-                throw new Exception($"Невозможно выдать сдачу {changeAmount} руб.");
+                throw new Exception($"Извините, в данный момент мы не можем продать вам товар по причине того, что автомат не может выдать вам нужную сдачу");
 
             return change;
         }

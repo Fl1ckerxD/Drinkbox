@@ -122,7 +122,8 @@
             const result = await response.json();
 
             if (!result.success) {
-                alert('Недостаточно средств');
+                alert(result.message);
+                return;
             }
 
             window.location.href = result.redirectUrl;

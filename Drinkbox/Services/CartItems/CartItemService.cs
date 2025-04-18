@@ -95,7 +95,11 @@ namespace Drinkbox.Services.CartItems
 
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
                 if (product != null)
+                {
                     product.Quantity -= item.Quantity;
+                    if (product.Quantity <= 0)
+                        product.IsActive = false;
+                }
             }
 
             await _context.SaveChangesAsync();

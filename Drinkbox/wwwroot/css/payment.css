@@ -39,7 +39,6 @@
         padding: 15px;
     }
 
-/* Table column widths */
 .denomination-col {
     width: 50%;
     text-align: left;
@@ -55,7 +54,6 @@
     text-align: center;
 }
 
-/* Coin styling */
 .coin-info {
     display: flex;
     flex-direction: row;
@@ -71,20 +69,10 @@
     justify-content: center;
 }
 
-/*.payment-coin-image {
-    width: 200px;
-    height: 220px;
-    object-fit: contain;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-*/
 .product-name {
     font-size: 14px;
 }
 
-/* Quantity control styling */
 .quantity {
     display: flex;
     align-items: center;
@@ -122,14 +110,12 @@
     background-color: white;
 }
 
-/* Sum styling */
 .sum-cell {
     font-weight: bold;
     text-align: center;
     font-size: 20px;
 }
 
-/* Remove icon styling */
 .remove-icon {
     background: none;
     border: none;
@@ -143,7 +129,6 @@
         color: #333;
     }
 
-/* Total styling */
 .total-container {
     display: flex;
     justify-content: right;
@@ -165,7 +150,6 @@
     font-size: 30px;
 }
 
-/* Action buttons styling */
 .payment-actions {
     display: flex;
     justify-content: space-between;
@@ -212,7 +196,7 @@
     .disabled:hover {
         background-color: #cccccc;
     }
-/* Responsive */
+
 @media (max-width: 768px) {
     .payment-info {
         flex-direction: column;
