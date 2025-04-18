@@ -4,6 +4,10 @@ using System.Text.Json;
 
 namespace Drinkbox.Services.CartItems
 {
+    /// <summary>
+    /// Сервис для работы с элементами корзины.
+    /// Реализует интерфейс ICartItemService для управления товарами в корзине.
+    /// </summary>
     public class CartItemService : ICartItemService
     {
         private List<CartItem> _cartItems = new();
@@ -70,6 +74,7 @@ namespace Drinkbox.Services.CartItems
         public async Task CompleteOrder()
         {
             var totalPrice = _cartItems.Sum(x => x.Price * x.Quantity);
+
             var order = new Order
             {
                 TotalSum = totalPrice
@@ -78,6 +83,7 @@ namespace Drinkbox.Services.CartItems
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
+            // Добавляем детали заказа для каждого товара в корзине
             foreach (var item in _cartItems)
             {
                 var brand = await _context.Brands.FirstOrDefaultAsync(b => b.BrandId == item.BrandId);
@@ -93,6 +99,7 @@ namespace Drinkbox.Services.CartItems
                 };
                 _context.OrderItems.Add(orderItem);
 
+                // Обновляем количество товара в базе данных
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
                 if (product != null)
                 {

@@ -5,6 +5,10 @@ namespace Drinkbox.Services.Products
 {
     public class ProductService : IProductService
     {
+        /// <summary>
+        /// Сервис для работы с продуктами.
+        /// Реализует интерфейс IProductService для управления продуктами.
+        /// </summary>
         private readonly DrinkboxContext _context;
         public ProductService(DrinkboxContext context)
         {

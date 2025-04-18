@@ -2,11 +2,15 @@
     const brandSelect = document.querySelector('.brand-select');
     const priceRange = document.querySelector('input[type="range"]');
 
-    // Функция для обновления максимальной цены
+    /**
+     * Обновляет минимальную и максимальную цены в зависимости от выбранного бренда.
+     * @param {number|null} brandId - ID выбранного бренда (null, если бренд не выбран).
+     */
     async function updatePriceValues(brandId) {
         try {
             const maxPriceValueLabel = document.querySelector('.max-price');
             const minPriceValueLabel = document.querySelector('.min-price');
+
             const response = await fetch(`/Home/GetPriceValues?brandId=${brandId}`);
             if (!response.ok) throw new Error('Ошибка сети');
 
@@ -14,10 +18,12 @@
             const maxPrice = Math.ceil(data.maxPrice);
             const minPrice = Math.ceil(data.minPrice);
 
-            //Обновляем диапазон и значение
+            // Обновляем диапазон и значение ползунка
             priceRange.min = minPrice;
             priceRange.max = maxPrice;
             priceRange.value = maxPrice;
+
+            // Обновляем текстовые метки с ценами
             minPriceValueLabel.textContent = `${minPrice} руб.`
             maxPriceValueLabel.textContent = `${maxPrice} руб.`;
         }
@@ -28,6 +34,9 @@
         }
     }
 
+    /**
+     * Обновляет состояние кнопки корзины в зависимости от статуса корзины.
+     */
     async function updateCartButton() {
         const response = await fetch('/Cart/GetCartStatus');
         const data = await response.json();
@@ -35,6 +44,7 @@
         const cartButton = document.querySelector('.choose-button');
         const text = document.querySelector('.cart');
 
+        // Если в корзине есть товары, обновляем ссылку и текст
         if (data.hasItems) {
             cartButton.href = '/Cart';
             text.textContent = `Выбрано: ${data.itemCount}`;
@@ -45,10 +55,12 @@
         }
     }
 
-    // Инициализация при загрузке
-    updatePriceValues(null);
+    // Инициализация: обновляем цены при загрузке страницы
+    await updatePriceValues(null);
 
-    // Обработчик изменения выбора бренда
+    /**
+     * Обрабатывает изменение выбора бренда.
+     */
     brandSelect.addEventListener('change', async function () {
         try {
             const brandId = this.value;
@@ -62,7 +74,9 @@
 
             const html = await response.text();
             document.querySelector('.product-grid').innerHTML = html;
-            updatePriceValues(brandId);
+
+            // Обновляем диапазон цен для выбранного бренда
+            await updatePriceValues(brandId);
         }
         catch (error) {
             console.error('Ошибка:', error);
@@ -72,6 +86,9 @@
         }
     });
 
+    /**
+     * Обрабатывает изменение значения ползунка цены.
+     */
     priceRange.addEventListener('input', async function () {
         try {
             const brandId = brandSelect.value;
@@ -95,6 +112,9 @@
         }
     });
 
+    /**
+     * Обрабатывает клик по кнопке выбора продукта.
+     */
     document.addEventListener('click', async function (event) {
         const button = event.target.closest('.product-button');
         if (!button) return;
@@ -124,6 +144,10 @@
         }
     });
 
+    /**
+     * Переключает состояние кнопки выбора продукта.
+     * @param {HTMLElement} button - Кнопка выбора продукта.
+     */
     function toggleButtonState(button) {
         if (!button) return;
 

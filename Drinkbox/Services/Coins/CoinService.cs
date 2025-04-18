@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Services.Coins
 {
+    /// <summary>
+    /// Сервис для работы с монетами.
+    /// Реализует интерфейс ICoinService для управления монетами.
+    /// </summary>
     public class CoinService : ICoinService
     {
         private readonly DrinkboxContext _context;

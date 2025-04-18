@@ -6,6 +6,9 @@ using System.Text.Json;
 
 namespace Drinkbox.Controllers
 {
+    /// <summary>
+    /// Контроллер для обработки платежей.
+    /// </summary>
     public class PaymentController : Controller
     {
         private readonly ICoinService _coinService;
@@ -18,6 +21,12 @@ namespace Drinkbox.Controllers
             _cartItemService = cartItemService;
             _logger = logger;
         }
+
+        /// <summary>
+        /// Возвращает страницу оплаты с информацией о доступных монетах.
+        /// Если корзина пуста, перенаправляет на главную страницу.
+        /// </summary>
+        /// <returns>Представление оплаты или перенаправление на главную страницу.</returns>
         public async Task<IActionResult> Index()
         {
             if (_cartItemService.CartItems.Count == 0)
@@ -28,6 +37,11 @@ namespace Drinkbox.Controllers
             return View(coinList);
         }
 
+        /// <summary>
+        /// Обрабатывает платеж, проверяет достаточность средств и выдает сдачу.
+        /// </summary>
+        /// <param name="coinsInput">Список монет, предоставленных пользователем.</param>
+        /// <returns>JSON с результатом операции: успешность, сообщение об ошибке или URL для перенаправления.</returns>
         [HttpPost]
         public async Task<IActionResult> ProcessPayment([FromBody] List<CoinInput> coinsInput)
         {
@@ -39,10 +53,14 @@ namespace Drinkbox.Controllers
                 if (paymentTotal < cartTotal)
                     return Json(new { success = false, message = "Недостаточно средств" });
 
+                // Сохранение предоставленных монет в базу данных.
                 await _coinService.SaveCoinsAsync(coinsInput);
 
+                // Рассчитывание сдачи.
                 var change = paymentTotal - cartTotal;
                 Dictionary<int, int> changeCoins = new();
+
+                // Если сдача больше нуля, рассчитываем её и обновляем количество монет.
                 if (change > 0)
                 {
                     changeCoins = await _coinService.CalculateChange(change);
@@ -50,6 +68,7 @@ namespace Drinkbox.Controllers
                         await _coinService.UpdateQuantityCoins(changeCoins);
                 }
 
+                // Завершаем заказ, очищая корзину.
                 await _cartItemService.CompleteOrder();
 
                 TempData["ChangeCoins"] = JsonSerializer.Serialize(changeCoins);
@@ -66,6 +85,10 @@ namespace Drinkbox.Controllers
             }
         }
 
+        /// <summary>
+        /// Отображает страницу завершения покупки с информацией о сдаче.
+        /// </summary>
+        /// <returns>Представление с информацией о сдаче или перенаправление на главную страницу.</returns>
         public IActionResult CompletePurchase()
         {
             if (TempData["ChangeCoins"] is string serializedCoins)

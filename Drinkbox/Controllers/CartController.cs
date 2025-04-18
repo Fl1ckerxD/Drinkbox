@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Drinkbox.Controllers
 {
+    /// <summary>
+    /// Контроллер для управления корзиной покупок
+    /// </summary>
     public class CartController : Controller
     {
         private readonly ICartItemService _cartItemService;
@@ -19,6 +22,7 @@ namespace Drinkbox.Controllers
 
         public IActionResult Index()
         {
+            // Если в корзине нет товаров, перенаправляем пользователя на главную страницу
             if (_cartItemService.CartItems.Count == 0)
                 return RedirectToAction("Index", "Home");
 
@@ -26,6 +30,11 @@ namespace Drinkbox.Controllers
             return View(cartItems);
         }
 
+        /// <summary>
+        /// Удаляет товар из корзины по его ID.
+        /// </summary>
+        /// <param name="productId">Идентификатор товара для удаления.</param>
+        /// <returns>HTTP 200 (OK), если товар успешно удален, или HTTP 404 (Not Found), если товар не найден.</returns>
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int productId)
         {
@@ -38,6 +47,10 @@ namespace Drinkbox.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Возвращает статус корзины: количество товаров и наличие товаров.
+        /// </summary>
+        /// <returns>JSON с количеством товаров и флагом наличия товаров.</returns>
         [HttpGet]
         public IActionResult GetCartStatus()
         {
@@ -45,6 +58,11 @@ namespace Drinkbox.Controllers
             return Json(new { itemCount = cartItems.Count, hasItems = cartItems.Any() });
         }
 
+        /// <summary>
+        /// Добавляет или удаляет товар из корзины.
+        /// </summary>
+        /// <param name="request">Запрос, содержащий ID товара и флаг isSelected.</param>
+        /// <returns>HTTP 200 (OK), если операция выполнена успешно, или HTTP 404 (Not Found), если товар не найден.</returns>
         [HttpPost]
         public async Task<IActionResult> ToggleProduct([FromBody] ToggleProductRequest request)
         {
@@ -60,6 +78,12 @@ namespace Drinkbox.Controllers
             return Ok();
         }
 
+
+        /// <summary>
+        /// Обновляет количество товара в корзине.
+        /// </summary>
+        /// <param name="request">Запрос, содержащий ID товара и новое количество.</param>
+        /// <returns>JSON с результатом операции, фактическим количеством и максимальным количеством товара.</returns>
         [HttpPost]
         public IActionResult UpdateQuantity([FromBody] UpdateQuantityRequest request)
         {
@@ -73,6 +97,7 @@ namespace Drinkbox.Controllers
 
                 product.Quantity = quantity;
                 _cartItemService.SaveCart();
+
                 return Json(new
                 {
                     success = true,
@@ -83,6 +108,10 @@ namespace Drinkbox.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Возвращает общую стоимость товаров в корзине.
+        /// </summary>
+        /// <returns>JSON с общей стоимостью товаров.</returns>
         [HttpGet]
         public IActionResult GetTotal()
         {
@@ -91,6 +120,13 @@ namespace Drinkbox.Controllers
         }
     }
 
+    /// <summary>
+    /// DTO для запроса на добавление/удаление товара из корзины.
+    /// </summary>
     public record ToggleProductRequest(int productId, bool isSelected);
+
+    /// <summary>
+    /// DTO для запроса на обновление количества товара.
+    /// </summary>
     public record UpdateQuantityRequest(int productId, int quantity);
 }

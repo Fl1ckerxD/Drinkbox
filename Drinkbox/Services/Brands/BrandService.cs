@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Services.Brands
 {
+    /// <summary>
+    /// Сервис для работы с брендами.
+    /// Реализует интерфейс IBrandService для выполнения операций с брендами.
+    /// </summary>
     public class BrandService : IBrandService
     {
         private readonly DrinkboxContext _context;

@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Drinkbox.Controllers
 {
+    /// <summary>
+    /// Контроллер для управления главной страницей приложения.
+    /// </summary>
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -24,6 +27,10 @@ namespace Drinkbox.Controllers
             _cartItemService = cartItemService;
         }
 
+        /// <summary>
+        /// Возвращает главную страницу с информацией о продуктах, брендах и товарах в корзине.
+        /// </summary>
+        /// <returns>Представление главной страницы или пустое представление в случае ошибки.</returns>
         public async Task<IActionResult> Index()
         {
             try
@@ -51,6 +58,12 @@ namespace Drinkbox.Controllers
             }
         }
 
+        /// <summary>
+        /// Фильтрует продукты по бренду или максимальной цене.
+        /// </summary>
+        /// <param name="brandId">Идентификатор бренда для фильтрации (необязательный).</param>
+        /// <param name="maxPrice">Максимальная цена для фильтрации (необязательный).</param>
+        /// <returns>Частичное представление с отфильтрованным списком продуктов.</returns>
         [HttpGet]
         [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> FilterProducts(int? brandId, int? maxPrice)
@@ -68,6 +81,11 @@ namespace Drinkbox.Controllers
             return PartialView("_ProductListPartial", model);
         }
 
+        /// <summary>
+        /// Возвращает минимальную и максимальную цены продуктов для указанного бренда.
+        /// </summary>
+        /// <param name="brandId">Идентификатор бренда для получения цен (необязательный).</param>
+        /// <returns>JSON с минимальной и максимальной ценами.</returns>
         [HttpGet]
         [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetPriceValues(int? brandId)

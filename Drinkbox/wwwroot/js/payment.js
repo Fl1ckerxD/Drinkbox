@@ -1,5 +1,9 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
 
+    /**
+     * Обновляет общую сумму товаров в корзине через API.
+     * @returns {number} - Возвращает общую стоимость товаров в корзине.
+     */
     async function updateTotal() {
         try {
             const response = await fetch('/Cart/GetTotal');
@@ -14,6 +18,10 @@
         }
     }
 
+    /**
+     * Обновляет общую сумму платежа на основе данных из таблицы монет.
+     * @returns {number} - Возвращает общую сумму платежа.
+     */
     function updatePaymentTotal() {
         let total = 0;
 
@@ -25,9 +33,14 @@
         return total;
     }
 
+    /**
+     * Получает данные о монетах из таблицы.
+     * @returns {Array} - Массив объектов с данными о монетах.
+     */
     function getCoinsData() {
         const coins = [];
 
+        // Проходим по всем строкам таблицы монет
         document.querySelectorAll('.payment-table tbody tr').forEach(row => {
             const quantityInput = row.querySelector('.quantity-value');
             const coinName = row.querySelector('.coin-name');
@@ -44,6 +57,9 @@
         return coins.filter(coin => coin.Quantity > 0);
     }
 
+    /**
+     * Проверяет, достаточно ли средств для оплаты товаров в корзине.
+     */
     async function checkPayment() {
         const cartTotal = await updateTotal();
         const paymentTotal = updatePaymentTotal();
@@ -60,6 +76,10 @@
         }
     }
 
+    /**
+     * Обновляет сумму для строки с монетой в таблице платежей.
+     * @param {HTMLElement} element - Элемент поля ввода количества монет.
+     */
     async function updateSumPrice(element) {
         const row = element.closest('tr');
         const denomination = parseInt(row.querySelector('.coin-name').textContent.split()[0]);
@@ -69,21 +89,21 @@
         sumCell.textContent = `${denomination * quantity} руб.`;
     }
 
-    updateTotal();
-
+    // Обрабатываем ввод количества монет
     document.querySelectorAll('.quantity-value').forEach(input => {
         input.addEventListener('input', async function () {
-            //const coinId = this.dataset.coinId;
-
+            // Очищаем значение от нечисловых символов и удаляем начальные нули
             let value = this.value.replace(/[^0-9]/g, '').replace(/^0+/, '') || '0';
             this.value = Math.max(0, value);
 
+            // Обновляем сумму для строки, общую сумму платежа и проверяем возможность оплаты
             updateSumPrice(this);
             updatePaymentTotal();
             checkPayment();
         });
     });
 
+    // Обрабатываем кнопки "+" и "-" для изменения количества монет
     document.querySelectorAll('.quantity-control').forEach(button => {
         button.addEventListener('click', async function () {
             const input = this.parentElement.querySelector('.quantity-value');
@@ -97,18 +117,21 @@
             }
 
             input.value = value;
+
+            // Обновляем сумму для строки, общую сумму платежа и проверяем возможность оплаты
             updateSumPrice(input);
             updatePaymentTotal();
             checkPayment();
         });
     });
 
+    // Обрабатываем клик по кнопке оплаты
     document.querySelector('.payment-button').addEventListener('click', async function (e) {
-        e.preventDefault();
+        e.preventDefault(); // Предотвращаем стандартное поведение кнопки
 
         if (this.classList.contains('disabled')) return;
 
-        const coins = getCoinsData();
+        const coins = getCoinsData(); // Получаем данные о монетах
 
         try {
             const response = await fetch('/Payment/ProcessPayment', {
@@ -126,6 +149,7 @@
                 return;
             }
 
+            // Перенаправляем пользователя на страницу завершения покупки
             window.location.href = result.redirectUrl;
         }
         catch (error) {
@@ -134,6 +158,7 @@
         }
     })
 
+    // Инициализация: обновляем общую сумму, сумму платежа и проверяем возможность оплаты
     updateTotal();
     updatePaymentTotal();
     checkPayment();

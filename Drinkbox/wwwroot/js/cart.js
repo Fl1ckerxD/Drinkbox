@@ -1,16 +1,20 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    // Обрабатываем ввод количества товаров в корзине
     document.querySelectorAll('.quantity-value').forEach(input => {
         input.addEventListener('input', async function () {
             const productId = this.dataset.productId;
 
+            // Очищаем значение от нечисловых символов и удаляем начальные нули. Если значение пустое, устанавливаем 1.
             let value = this.value.replace(/[^0-9]/g, '').replace(/^0+/, '') || '1';
             value = Math.max(1, value);
 
+            // Обновляем количество товара в корзине и обновляем общую сумму
             await updateCartItem(productId, value, this)
             updateTotal();
         });
     });
 
+    // Обрабатываем кнопки "+" и "-" для изменения количества товаров
     document.querySelectorAll('.quantity-control').forEach(button => {
         button.addEventListener('click', async function () {
             const input = this.parentElement.querySelector('.quantity-value');
@@ -24,11 +28,13 @@
                 value = Math.max(1, value - 1);
             }
 
+            // Обновляем количество товара в корзине и обновляем общую сумму
             await updateCartItem(productId, value, input);
             updateTotal();
         });
     });
 
+    // Обрабатываем удаление товаров из корзины
     document.querySelectorAll('.remove-icon').forEach(button => {
         button.addEventListener('click', async function () {
             if (!confirm('Вы уверены, что хотите удалить этот предмет?')) {
@@ -60,6 +66,12 @@
         });
     });
 
+    /**
+     * Обновляет количество товара в корзине через API.
+     * @param {number} productId - ID товара.
+     * @param {number} quantity - количество товара.
+     * @param {HTMLElement} inputElement - Элемент поля ввода для обновления значения.
+     */
     async function updateCartItem(productId, quantity, inputElement) {
         try {
             const response = await fetch('Cart/UpdateQuantity', {
@@ -85,6 +97,9 @@
         }
     }
 
+    /**
+     * Обновляет общую сумму товаров в корзине.
+     */
     async function updateTotal() {
         try {
             const response = await fetch('/Cart/GetTotal');
@@ -98,6 +113,10 @@
         }
     }
 
+    /**
+     * Обновляет цену товара в зависимости от его количества.
+     * @param {HTMLElement} element - Элемент поля ввода количества.
+     */
     async function updateProductPrice(element) {
         const row = element.closest('tr');
         const priceElement = row.querySelector('.price-cell');
@@ -107,5 +126,6 @@
         priceElement.textContent = `${currentPrice} руб.`;
     }
 
+    // Инициализация: обновляем общую сумму при загрузке страницы
     updateTotal();
 });
