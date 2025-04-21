@@ -1,4 +1,5 @@
 ﻿using Drinkbox.Models;
+using Drinkbox.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Services.Brands
@@ -9,8 +10,8 @@ namespace Drinkbox.Services.Brands
     /// </summary>
     public class BrandService : IBrandService
     {
-        private readonly DrinkboxContext _context;
-        public BrandService(DrinkboxContext context)
+        private readonly VendomatContext _context;
+        public BrandService(VendomatContext context)
         {
             _context = context;
         }

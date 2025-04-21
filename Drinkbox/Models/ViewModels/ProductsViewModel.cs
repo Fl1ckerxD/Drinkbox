@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Drinkbox.Models.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Drinkbox.Models
+namespace Drinkbox.Models.ViewModels
 {
     public class ProductsViewModel
     {

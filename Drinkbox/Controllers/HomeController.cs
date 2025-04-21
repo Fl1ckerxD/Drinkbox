@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using Drinkbox.Models;
+using Drinkbox.Models.Entities;
+using Drinkbox.Models.ViewModels;
 using Drinkbox.Services.Brands;
 using Drinkbox.Services.CartItems;
 using Drinkbox.Services.Products;

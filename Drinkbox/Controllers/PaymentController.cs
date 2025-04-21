@@ -1,4 +1,5 @@
 ﻿using Drinkbox.Models;
+using Drinkbox.Models.Entities;
 using Drinkbox.Services.CartItems;
 using Drinkbox.Services.Coins;
 using Microsoft.AspNetCore.Mvc;

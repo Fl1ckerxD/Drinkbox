@@ -1,4 +1,4 @@
-﻿@model ProductsViewModel
+﻿@model Drinkbox.Models.ViewModels.ProductsViewModel
 
 @foreach (var prod in Model.Products)
 {
@@ -9,7 +9,7 @@
         <div class="product-info">
             <h3 class="product-name">@prod.ProductName</h3>
             <div class="product-price">@prod.Price руб.</div>
-            @if (prod.IsActive.Value)
+            @if (prod.IsActive)
             {
                 <button type="button"
                     class="product-button @(Model.ProductsInCart.Contains(prod.ProductId) ? "selected" : "")"

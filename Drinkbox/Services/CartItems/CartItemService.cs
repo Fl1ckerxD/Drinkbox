@@ -1,4 +1,5 @@
 ﻿using Drinkbox.Models;
+using Drinkbox.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -12,9 +13,9 @@ namespace Drinkbox.Services.CartItems
     {
         private List<CartItem> _cartItems = new();
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly DrinkboxContext _context;
+        private readonly VendomatContext _context;
         public List<CartItem> CartItems => _cartItems;
-        public CartItemService(IHttpContextAccessor httpContextAccessor, DrinkboxContext context)
+        public CartItemService(IHttpContextAccessor httpContextAccessor, VendomatContext context)
         {
             _httpContextAccessor = httpContextAccessor;
             _context = context;
@@ -91,8 +92,8 @@ namespace Drinkbox.Services.CartItems
                 {
                     OrderId = order.OrderId,
                     ProductId = item.ProductId,
-                    ProductName = item.ProductName,
-                    BrandName = brand.BrandName,
+                    //ProductName = item.ProductName,
+                    //BrandName = brand.BrandName,
                     Quantity = item.Quantity,
                     UnitPrice = item.Price,
                     TotalPrice = totalPrice

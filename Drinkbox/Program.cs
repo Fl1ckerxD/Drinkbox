@@ -29,9 +29,9 @@ namespace Drinkbox
 
             builder.Services.AddHttpContextAccessor();
 
-            var conString = builder.Configuration.GetConnectionString("DrinkBoxDatabase") ??
-                throw new InvalidOperationException("Connection string 'DrinkBoxDatabase' not found.");
-            builder.Services.AddDbContext<DrinkboxContext>(options => options.UseSqlServer(conString));
+            var conString = builder.Configuration.GetConnectionString("VendomatDatabase") ??
+                throw new InvalidOperationException("Connection string 'VendomatDatabase' not found.");
+            builder.Services.AddDbContext<VendomatContext>(options => options.UseSqlServer(conString));
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IBrandService, BrandService>();

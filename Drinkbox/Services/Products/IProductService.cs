@@ -1,4 +1,5 @@
 ﻿using Drinkbox.Models;
+using Drinkbox.Models.Entities;
 
 namespace Drinkbox.Services.Products
 {

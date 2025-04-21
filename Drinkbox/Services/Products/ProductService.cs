@@ -1,4 +1,5 @@
 ﻿using Drinkbox.Models;
+using Drinkbox.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Services.Products
@@ -9,8 +10,8 @@ namespace Drinkbox.Services.Products
         /// Сервис для работы с продуктами.
         /// Реализует интерфейс IProductService для управления продуктами.
         /// </summary>
-        private readonly DrinkboxContext _context;
-        public ProductService(DrinkboxContext context)
+        private readonly VendomatContext _context;
+        public ProductService(VendomatContext context)
         {
             _context = context;
         }

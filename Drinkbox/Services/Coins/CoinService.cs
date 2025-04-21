@@ -1,4 +1,5 @@
 ﻿using Drinkbox.Models;
+using Drinkbox.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Services.Coins
@@ -9,8 +10,8 @@ namespace Drinkbox.Services.Coins
     /// </summary>
     public class CoinService : ICoinService
     {
-        private readonly DrinkboxContext _context;
-        public CoinService(DrinkboxContext context)
+        private readonly VendomatContext _context;
+        public CoinService(VendomatContext context)
         {
             _context = context;
         }
