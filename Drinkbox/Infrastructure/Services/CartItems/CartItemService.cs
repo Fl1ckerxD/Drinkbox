@@ -82,9 +82,6 @@ namespace Drinkbox.Infrastructure.Services.CartItems
                 TotalSum = totalPrice
             };
 
-            //_context.Orders.Add(order);
-            //await _context.SaveChangesAsync();
-
             // Добавляем детали заказа для каждого товара в корзине
             foreach (var item in _cartItems)
             {
@@ -93,8 +90,6 @@ namespace Drinkbox.Infrastructure.Services.CartItems
                 {
                     Order = order,
                     ProductId = item.ProductId,
-                    //ProductName = item.ProductName,
-                    //BrandName = brand.BrandName,
                     Quantity = item.Quantity,
                     UnitPrice = item.Price,
                     TotalPrice = totalPrice

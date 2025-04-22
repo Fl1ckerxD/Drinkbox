@@ -1,4 +1,5 @@
 using Drinkbox.Infrastructure.Data;
+using Drinkbox.Infrastructure.Repositories;
 using Drinkbox.Infrastructure.Services.Brands;
 using Drinkbox.Infrastructure.Services.CartItems;
 using Drinkbox.Infrastructure.Services.Coins;
@@ -45,6 +46,7 @@ namespace Drinkbox
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<ICartItemService, CartItemService>();
             builder.Services.AddScoped<ICoinService, CoinService>();
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             builder.Services.AddTransient<IExcelImportService, ExcelImportService>();
 
