@@ -100,7 +100,7 @@
     margin-bottom: 0px;
 }
 
-.cart {
+.cart, .import {
     display: flex;
     justify-content: center;
 }

@@ -2,10 +2,12 @@ using System.Diagnostics;
 using Drinkbox.Core.Entities;
 using Drinkbox.Infrastructure.Services.Brands;
 using Drinkbox.Infrastructure.Services.CartItems;
+using Drinkbox.Infrastructure.Services.ExcelImports;
 using Drinkbox.Infrastructure.Services.Products;
 using Drinkbox.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace Drinkbox.Web.Controllers.Home
 {
@@ -18,14 +20,16 @@ namespace Drinkbox.Web.Controllers.Home
         private readonly IProductService _productService;
         private readonly IBrandService _brandService;
         private readonly ICartItemService _cartItemService;
+        private readonly IExcelImportService _excelImportService;
 
         public HomeController(ILogger<HomeController> logger, IProductService productService,
-            IBrandService brandService, ICartItemService cartItemService)
+            IBrandService brandService, ICartItemService cartItemService, IExcelImportService excelImportService)
         {
             _logger = logger;
             _productService = productService;
             _brandService = brandService;
             _cartItemService = cartItemService;
+            _excelImportService = excelImportService;
         }
 
         /// <summary>
@@ -95,6 +99,28 @@ namespace Drinkbox.Web.Controllers.Home
             var maxPrice = products.Any() ? products.Max(p => p.Price) : 0;
             var minPrice = products.Any() ? products.Min(p => p.Price) : 0;
             return Json(new { minPrice, maxPrice });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Import(ImportExcelViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Index", model);
+            }
+
+            try
+            {
+                await using var stream = model.ExcelFile.OpenReadStream();
+                await _excelImportService.ImportProductsAsync(stream);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Ошибка импорта: {ex.Message}";
+                _logger.LogError(ex, "Ошибка при импорте продуктов");
+            }
+
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

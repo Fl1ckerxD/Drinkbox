@@ -2,6 +2,7 @@ using Drinkbox.Infrastructure.Data;
 using Drinkbox.Infrastructure.Services.Brands;
 using Drinkbox.Infrastructure.Services.CartItems;
 using Drinkbox.Infrastructure.Services.Coins;
+using Drinkbox.Infrastructure.Services.ExcelImports;
 using Drinkbox.Infrastructure.Services.Products;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,8 @@ namespace Drinkbox
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<ICartItemService, CartItemService>();
             builder.Services.AddScoped<ICoinService, CoinService>();
+
+            builder.Services.AddTransient<IExcelImportService, ExcelImportService>();
 
             var app = builder.Build();
 
