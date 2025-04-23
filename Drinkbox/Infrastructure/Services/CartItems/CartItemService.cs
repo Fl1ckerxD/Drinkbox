@@ -1,6 +1,7 @@
 ﻿using Drinkbox.Core.DTOs;
 using Drinkbox.Core.Entities;
 using Drinkbox.Infrastructure.Data;
+using Drinkbox.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -14,12 +15,12 @@ namespace Drinkbox.Infrastructure.Services.CartItems
     {
         private List<CartItem> _cartItems = new();
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly VendomatContext _context;
+        private readonly IUnitOfWork _uow;
         public List<CartItem> CartItems => _cartItems;
-        public CartItemService(IHttpContextAccessor httpContextAccessor, VendomatContext context)
+        public CartItemService(IHttpContextAccessor httpContextAccessor, IUnitOfWork uow)
         {
             _httpContextAccessor = httpContextAccessor;
-            _context = context;
+            _uow = uow;
             LoadCart();
         }
         public void AddToCart(Product product, int quantity = 1)
@@ -85,19 +86,21 @@ namespace Drinkbox.Infrastructure.Services.CartItems
             // Добавляем детали заказа для каждого товара в корзине
             foreach (var item in _cartItems)
             {
-                var brand = await _context.Brands.FirstOrDefaultAsync(b => b.BrandId == item.BrandId);
+                var brand = await _uow.Brands.GetByIdAsync(item.BrandId);
                 var orderItem = new OrderItem
                 {
                     Order = order,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     UnitPrice = item.Price,
-                    TotalPrice = totalPrice
+                    TotalPrice = item.Quantity * item.Price
                 };
-                _context.OrderItems.Add(orderItem);
+
+                _uow.Orders.AddOrderItem(orderItem);
 
                 // Обновляем количество товара в базе данных
-                var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
+                var product = await _uow.Products.GetByIdAsync(item.ProductId);
+
                 if (product != null)
                 {
                     product.Quantity -= item.Quantity;
@@ -106,7 +109,7 @@ namespace Drinkbox.Infrastructure.Services.CartItems
                 }
             }
 
-            await _context.SaveChangesAsync();
+            await _uow.CommitAsync();
 
             _cartItems.Clear();
             SaveCart();

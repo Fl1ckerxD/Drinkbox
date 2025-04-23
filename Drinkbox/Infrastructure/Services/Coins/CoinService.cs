@@ -1,6 +1,7 @@
 ﻿using Drinkbox.Core.DTOs;
 using Drinkbox.Core.Entities;
 using Drinkbox.Infrastructure.Data;
+using Drinkbox.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Infrastructure.Services.Coins
@@ -11,13 +12,13 @@ namespace Drinkbox.Infrastructure.Services.Coins
     /// </summary>
     public class CoinService : ICoinService
     {
-        private readonly VendomatContext _context;
-        public CoinService(VendomatContext context)
+        private readonly IUnitOfWork _uow;
+        public CoinService(IUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
-        public async Task<ICollection<Coin>> GetAllAsync() => await _context.Coins.ToListAsync();
+        public async Task<IEnumerable<Coin>> GetAllAsync() => await _uow.Coins.GetAllAsync();
 
         public async Task SaveCoinsAsync(List<CoinInput> userCoins)
         {
@@ -29,7 +30,7 @@ namespace Drinkbox.Infrastructure.Services.Coins
                 if (userCoin != null)
                     coin.Quantity += userCoin.Quantity;
             }
-            await _context.SaveChangesAsync();
+            await _uow.CommitAsync();
         }
 
         public async Task UpdateQuantityCoins(Dictionary<int, int> coinsToRemove)
@@ -42,7 +43,7 @@ namespace Drinkbox.Infrastructure.Services.Coins
                 if (coin != null)
                     coin.Quantity = Math.Max(0, coin.Quantity - quantity);
 
-                await _context.SaveChangesAsync();
+                await _uow.CommitAsync();
             }
         }
 

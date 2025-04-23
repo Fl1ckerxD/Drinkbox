@@ -15,14 +15,14 @@ namespace Drinkbox.Infrastructure.Services.Products
         /// Асинхронно получает все доступные продукты из базы данных.
         /// </summary>
         /// <returns>Коллекция всех продуктов.</returns>
-        Task<ICollection<Product>> GetAllAsync();
+        Task<IEnumerable<Product>> GetAllAsync();
 
         /// <summary>
         /// Получает продукты, фильтруя их по идентификатору бренда.
         /// </summary>
         /// <param name="brandId">Идентификатор бренда (необязательный).</param>
         /// <returns>Коллекция продуктов, отфильтрованных по бренду.</returns>
-        Task<ICollection<Product>> GetByBrandAsync(int? brandId);
+        Task<IEnumerable<Product>> GetByBrandAsync(int? brandId);
 
         /// <summary>
         /// Фильтрует продукты по максимальной цене.
@@ -30,6 +30,6 @@ namespace Drinkbox.Infrastructure.Services.Products
         /// <param name="products">Коллекция продуктов для фильтрации.</param>
         /// <param name="maxPrice">Максимальная цена для фильтрации.</param>
         /// <returns>Коллекция продуктов, цена которых не превышает указанную максимальную цену.</returns>
-        ICollection<Product> GetByMaxPrice(ICollection<Product> products, int maxPrice);
+        ICollection<Product> GetByMaxPrice(IEnumerable<Product> products, int maxPrice);
     }
 }

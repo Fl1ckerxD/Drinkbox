@@ -46,7 +46,7 @@ namespace Drinkbox
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<ICartItemService, CartItemService>();
             builder.Services.AddScoped<ICoinService, CoinService>();
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddTransient<IExcelImportService, ExcelImportService>();
 

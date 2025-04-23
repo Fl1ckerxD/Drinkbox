@@ -17,26 +17,23 @@ namespace Drinkbox.Infrastructure.Repositories
         public virtual async Task<IEnumerable<T>> GetAllAsync() =>
             await _dbSet.ToListAsync();
 
-        public virtual async Task<T> GetByIdAsync(int id) =>
-            await _dbSet.FindAsync(id) ?? throw new InvalidOperationException();
+        public virtual async Task<T?> GetByIdAsync(int id) =>
+            await _dbSet.FindAsync(id);
 
         public virtual async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
         }
 
         public virtual async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
         }
 
         public virtual async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
-            _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            if (entity != null) _dbSet.Remove(entity);
         }
     }
 }

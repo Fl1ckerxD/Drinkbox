@@ -9,7 +9,7 @@ namespace Drinkbox.Infrastructure.Services.Coins
         /// Асинхронно получает все доступные монеты из базы данных.
         /// </summary>
         /// <returns>Коллекция всех монет.</returns>
-        Task<ICollection<Coin>> GetAllAsync();
+        Task<IEnumerable<Coin>> GetAllAsync();
 
         /// <summary>
         /// Сохраняет предоставленные пользователем монеты в базу данных.

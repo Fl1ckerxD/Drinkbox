@@ -1,7 +1,5 @@
 ﻿using Drinkbox.Core.Entities;
-using Drinkbox.Infrastructure.Data;
 using Drinkbox.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Infrastructure.Services.Brands
 {
@@ -11,12 +9,12 @@ namespace Drinkbox.Infrastructure.Services.Brands
     /// </summary>
     public class BrandService : IBrandService
     {
-        private readonly IRepository<Brand> _repo;
-        public BrandService(IRepository<Brand> repo)
+        private readonly IUnitOfWork _uow;
+        public BrandService(IUnitOfWork uow)
         {
-            _repo = repo;
+            _uow = uow;
         }
 
-        public async Task<IEnumerable<Brand>> GetAllBrandsAsync() => await _repo.GetAllAsync();
+        public async Task<IEnumerable<Brand>> GetAllBrandsAsync() => await _uow.Brands.GetAllAsync();
     }
 }

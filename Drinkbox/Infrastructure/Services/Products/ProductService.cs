@@ -1,5 +1,6 @@
 ﻿using Drinkbox.Core.Entities;
 using Drinkbox.Infrastructure.Data;
+using Drinkbox.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Drinkbox.Infrastructure.Services.Products
@@ -10,15 +11,15 @@ namespace Drinkbox.Infrastructure.Services.Products
         /// Сервис для работы с продуктами.
         /// Реализует интерфейс IProductService для управления продуктами.
         /// </summary>
-        private readonly VendomatContext _context;
-        public ProductService(VendomatContext context)
+        private readonly IUnitOfWork _uow;
+        public ProductService(IUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
-        public async Task<ICollection<Product>> GetAllAsync() => await _context.Products.ToListAsync();
+        public async Task<IEnumerable<Product>> GetAllAsync() => await _uow.Products.GetAllAsync();
 
-        public async Task<ICollection<Product>> GetByBrandAsync(int? brandId)
+        public async Task<IEnumerable<Product>> GetByBrandAsync(int? brandId)
         {
             var products = await GetAllAsync();
 
@@ -30,10 +31,10 @@ namespace Drinkbox.Infrastructure.Services.Products
 
         public async Task<Product> GetByIdAsync(int productId)
         {
-            return await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+            return await _uow.Products.GetByIdAsync(productId);
         }
 
-        public ICollection<Product> GetByMaxPrice(ICollection<Product> products, int maxPrice)
+        public ICollection<Product> GetByMaxPrice(IEnumerable<Product> products, int maxPrice)
         {
             return products.Where(p => p.Price <= maxPrice).ToList();
         }
