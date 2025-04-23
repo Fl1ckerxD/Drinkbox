@@ -1,0 +1,9 @@
+﻿@using Drinkbox.Web.ViewModels
+@model ImportExcelViewModel
+
+<form asp-controller="Home" asp-action="Import" method="post" enctype="multipart/form-data" class="import-button">
+    <label class="import" for="excelFileInput">
+        Импорт
+    </label>
+    <input type="file" asp-for="ExcelFile" id="excelFileInput" hidden accept=".xlsx,.xls">
+</form>

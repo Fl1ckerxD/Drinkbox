@@ -163,4 +163,13 @@
             button.classList.add('selected');
         }
     }
+
+    document.getElementById('excelFileInput').addEventListener('change', function (e) {
+        const fileName = this.files[0]?.name || 'Файл не выбран';
+
+        // Автоматическая отправка формы при выборе файла
+        if (this.files.length > 0) {
+            this.closest('form').submit();
+        }
+    });
 });
