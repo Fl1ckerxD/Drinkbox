@@ -25,6 +25,8 @@ namespace Drinkbox.Infrastructure.Services.CartItems
         }
         public void AddToCart(Product product, int quantity = 1)
         {
+            if (product == null) throw new Exception("Не удалось добавить продукт в корзину - produсt is null");
+
             var existingItem = _cartItems.FirstOrDefault(x => x.ProductId == product.ProductId);
 
             if (existingItem != null)
@@ -65,6 +67,8 @@ namespace Drinkbox.Infrastructure.Services.CartItems
 
         public void RemoveFromCart(Product product)
         {
+            if (product == null) throw new Exception("Не удалось удалить продукт из корзины - produst is null");
+
             var existingItem = _cartItems.FirstOrDefault(x => x.ProductId == product.ProductId);
 
             if (existingItem == null)
@@ -109,7 +113,7 @@ namespace Drinkbox.Infrastructure.Services.CartItems
                 }
             }
 
-            await _uow.CommitAsync();
+            await _uow.SaveAsync();
 
             _cartItems.Clear();
             SaveCart();

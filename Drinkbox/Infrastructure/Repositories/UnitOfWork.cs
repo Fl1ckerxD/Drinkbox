@@ -23,7 +23,7 @@ namespace Drinkbox.Infrastructure.Repositories
         public IOrderRepository Orders { get; }
         public ICoinRepository Coins { get; }
 
-        public async Task<int> CommitAsync()
+        public async Task<int> SaveAsync()
         {
             return await _context.SaveChangesAsync();
         }

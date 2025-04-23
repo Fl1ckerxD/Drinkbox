@@ -7,7 +7,6 @@ using Drinkbox.Infrastructure.Services.Products;
 using Drinkbox.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 
 namespace Drinkbox.Web.Controllers.Home
 {
@@ -54,7 +53,7 @@ namespace Drinkbox.Web.Controllers.Home
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading products");
+                _logger.LogError(ex, "Ошибка загрузки продуктов");
                 return View(new ProductsViewModel
                 {
                     Products = Enumerable.Empty<Product>(),
@@ -72,17 +71,25 @@ namespace Drinkbox.Web.Controllers.Home
         [HttpGet]
         public async Task<IActionResult> FilterProducts(int? brandId, int? maxPrice)
         {
-            var products = await _productService.GetByBrandAsync(brandId);
-            if (maxPrice.HasValue)
-                products = _productService.GetByMaxPrice(products, maxPrice.Value);
-
-            var model = new ProductsViewModel
+            try
             {
-                Products = products,
-                ProductsInCart = new HashSet<int>(_cartItemService.CartItems.Select(x => x.ProductId))
-            };
+                var products = await _productService.GetByBrandAsync(brandId);
+                if (maxPrice.HasValue)
+                    products = _productService.GetByMaxPrice(products, maxPrice.Value);
 
-            return PartialView("_ProductListPartial", model);
+                var model = new ProductsViewModel
+                {
+                    Products = products,
+                    ProductsInCart = new HashSet<int>(_cartItemService.CartItems.Select(x => x.ProductId))
+                };
+
+                return PartialView("_ProductListPartial", model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка загрузки отфильтрованых продуктов");
+                return NoContent();
+            }
         }
 
         /// <summary>
@@ -94,11 +101,19 @@ namespace Drinkbox.Web.Controllers.Home
         [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetPriceValues(int? brandId)
         {
-            var products = await _productService.GetByBrandAsync(brandId);
+            try
+            {
+                var products = await _productService.GetByBrandAsync(brandId);
 
-            var maxPrice = products.Any() ? products.Max(p => p.Price) : 0;
-            var minPrice = products.Any() ? products.Min(p => p.Price) : 0;
-            return Json(new { minPrice, maxPrice });
+                var maxPrice = products.Any() ? products.Max(p => p.Price) : 0;
+                var minPrice = products.Any() ? products.Min(p => p.Price) : 0;
+                return Json(new { minPrice, maxPrice });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка получения расчета цен");
+                return NoContent();
+            }
         }
 
         [HttpPost]
@@ -116,7 +131,6 @@ namespace Drinkbox.Web.Controllers.Home
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"Ошибка импорта: {ex.Message}";
                 _logger.LogError(ex, "Ошибка при импорте продуктов");
             }
 

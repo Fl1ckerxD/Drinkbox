@@ -30,7 +30,7 @@ namespace Drinkbox.Infrastructure.Services.Coins
                 if (userCoin != null)
                     coin.Quantity += userCoin.Quantity;
             }
-            await _uow.CommitAsync();
+            await _uow.SaveAsync();
         }
 
         public async Task UpdateQuantityCoins(Dictionary<int, int> coinsToRemove)
@@ -43,7 +43,7 @@ namespace Drinkbox.Infrastructure.Services.Coins
                 if (coin != null)
                     coin.Quantity = Math.Max(0, coin.Quantity - quantity);
 
-                await _uow.CommitAsync();
+                await _uow.SaveAsync();
             }
         }
 

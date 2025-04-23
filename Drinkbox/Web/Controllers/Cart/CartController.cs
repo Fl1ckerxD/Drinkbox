@@ -39,13 +39,19 @@ namespace Drinkbox.Web.Controllers.Cart
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int productId)
         {
-            var product = await _productService.GetByIdAsync(productId);
+            try
+            {
+                var product = await _productService.GetByIdAsync(productId);
 
-            if (product == null) return NotFound();
+                _cartItemService.RemoveFromCart(product);
 
-            _cartItemService.RemoveFromCart(product);
-
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка удаления продкута из корзины");
+                return NotFound();
+            }
         }
 
         /// <summary>
@@ -67,16 +73,22 @@ namespace Drinkbox.Web.Controllers.Cart
         [HttpPost]
         public async Task<IActionResult> ToggleProduct([FromBody] ToggleProductRequest request)
         {
-            var product = await _productService.GetByIdAsync(request.productId);
+            try
+            {
+                var product = await _productService.GetByIdAsync(request.productId);
 
-            if (product == null) return NotFound();
+                if (request.isSelected)
+                    _cartItemService.AddToCart(product);
+                else
+                    _cartItemService.RemoveFromCart(product);
 
-            if (request.isSelected)
-                _cartItemService.AddToCart(product);
-            else
-                _cartItemService.RemoveFromCart(product);
-
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка удаления/добавления продукта в корзину");
+                return NotFound();
+            }
         }
 
 

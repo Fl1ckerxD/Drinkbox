@@ -6,6 +6,6 @@
         IProductRepository Products { get; }
         IOrderRepository Orders {  get; }
         ICoinRepository Coins { get; }
-        Task<int> CommitAsync();
+        Task<int> SaveAsync();
     }
 }

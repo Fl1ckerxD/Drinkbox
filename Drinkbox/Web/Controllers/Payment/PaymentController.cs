@@ -33,9 +33,17 @@ namespace Drinkbox.Web.Controllers.Payment
             if (_cartItemService.CartItems.Count == 0)
                 return RedirectToAction("Index", "Home");
 
-            var coinList = new List<Coin>(await _coinService.GetAllAsync());
-            coinList.ForEach(c => c.Quantity = 0);
-            return View(coinList);
+            try
+            {
+                var coinList = new List<Coin>(await _coinService.GetAllAsync());
+                coinList.ForEach(c => c.Quantity = 0);
+                return View(coinList);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка загрузки монет");
+                return NoContent();
+            }
         }
 
         /// <summary>
