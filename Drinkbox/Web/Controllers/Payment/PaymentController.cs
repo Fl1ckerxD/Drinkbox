@@ -30,7 +30,7 @@ namespace Drinkbox.Web.Controllers.Payment
         /// <returns>Представление оплаты или перенаправление на главную страницу.</returns>
         public async Task<IActionResult> Index()
         {
-            if (_cartItemService.CartItems.Count == 0)
+            if (_cartItemService.CartItems?.Count == 0)
                 return RedirectToAction("Index", "Home");
 
             try
@@ -73,8 +73,7 @@ namespace Drinkbox.Web.Controllers.Payment
                 if (change > 0)
                 {
                     changeCoins = await _coinService.CalculateChange(change);
-                    if (changeCoins != null)
-                        await _coinService.UpdateQuantityCoins(changeCoins);
+                    await _coinService.UpdateQuantityCoins(changeCoins);
                 }
 
                 // Завершаем заказ, очищая корзину.
