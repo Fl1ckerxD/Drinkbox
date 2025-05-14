@@ -1,9 +1,9 @@
 # 🥤 Автомат по продаже напитков (Drinkbox)
 
-![.NET](https://img.shields.io/badge/.NET-9.0-blue)
-![EF Core](https://img.shields.io/badge/EF_Core-9.0-green)
-![SQL Server](https://img.shields.io/badge/MS_SQL_Server-2019+-orange)
-![OpenXml](https://img.shields.io/badge/OpenXML-DocumentFormat-blueviolet)
+[![.NET](https://img.shields.io/badge/.NET_9.0-purple?logo=.net)](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+[![EF Core](https://img.shields.io/badge/EF_Core-9.0-green)](https://learn.microsoft.com/ru-ru/ef/core/get-started/overview/install)
+[![MS_SQL Server](https://img.shields.io/badge/MS_SQL_Server-2019+-orange)](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+[![OpenXml](https://img.shields.io/badge/OpenXML-DocumentFormat-blueviolet)](https://www.nuget.org/packages/DocumentFormat.OpenXml)
 
 Проект реализует виртуальный автомат по продаже напитков на базе современных веб-технологий. Позволяет пользователям просматривать каталог, совершать покупки, оплачивать монетами и получать подтверждение о покупке.
 
